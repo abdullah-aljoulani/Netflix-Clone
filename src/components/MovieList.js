@@ -1,16 +1,22 @@
-import React from 'react'
-import Movie from './Movie'
-import { Row } from 'react-bootstrap'
+import Movie from "./Movie";
+import Row from 'react-bootstrap/Row';
 
-export default function MovieList(movies) {
-return (
-    <div>
-        <Row>
-    {movies.movies.map((movie) =>(
-        <Movie movie={movie} />
-    ))
-    }
-    </Row>
-    </div>
-)
+
+function MovieList(props){
+
+
+
+    return (
+        <>
+        <Row xs={1} md={4} className="g-4">
+        {props.newArr.map((item)=>{
+            return <Movie a={item}/>
+        })}
+        </Row>
+        </>
+    )
 }
+
+export default MovieList;
+
+

@@ -1,31 +1,28 @@
-import React, { useEffect, useState } from 'react'
 import MovieList from './MovieList';
-// import { Modal, Row } from 'react-bootstrap'
-// import Movie from './Movie'
-// import axios from 'axios'
-// import ModalMOvie from './ModalMovie'
+import { useState , useEffect } from "react";
 
-export default function Home() {
-    const [movies , setMovies] =useState([])
+function Home() {
 
-    useEffect(()=>{
-        fetchData();
-    }, [])
-    const fetchData = async() =>{
-        try{
-            const res = await fetch(`https://api.themoviedb.org/3/trending/all/week?api_key=${process.env.REACT_APP_MOVIE_API}`)
-            const Data = await res.json();
-            // console.log(Data.results);
-            setMovies(Data.results)
-        }catch(err){
-            console.log(err)
-        }
+    const [movieArr, setMovieArr] = useState([]);
+
+    const sendReq = async () => {
+        const serverURL = `${process.env.REACT_APP_LOCAL_SERVER}/trending`;
+        const response = await fetch(serverURL);
+        const data = await response.json(); 
+        console.log(data);
+        setMovieArr(data);
     }
 
-return (
-    <div>
-        <h1> welcome to home page</h1>
-        <MovieList movies={movies}/>
-    </div>
-)
+    useEffect(()=>{
+        sendReq();
+    }, [])
+
+    return (
+        <>
+
+            <MovieList newArr={movieArr}></MovieList>
+        </>
+    )
 }
+
+export default Home;

@@ -1,50 +1,62 @@
-import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import Image from 'react-bootstrap/Image';
+import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
+import axios from 'axios';
 
-function ModalMOvie({ movie, comment, setComment, onClose, onAddToFavorites }) {
-    const handleAddToFavorites = () => {
-        onAddToFavorites();
-        onClose();
-    };
-
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
-    const handleCommentChange = (event) => {
-        setComment(event.target.value);
-    };
-    
-    return (
-        <>
-        <Modal show={handleShow} onHide={handleClose}>
-            <Modal.Header closeButton>
-            <Modal.Title>{movie.title}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-            <img className="img-fluid" src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} alt={movie.title || movie.name} />
-        <p>{movie.overview}</p>
-            <textarea
-                className="form-control"
-                rows="3"
-                value={comment}
-                onChange={handleCommentChange}
-                ></textarea>
-            </Modal.Body>
-            <Modal.Footer>
-            <Button variant="primary" onClick={handleAddToFavorites}>
-            Add to Favorite list
-            </Button>
-            <Button variant="secondary" onClick={onClose}>
-                Close
-            </Button>
-            </Modal.Footer>
-        </Modal>
-        </>
-    );
+function ModalMovie(props) {
+    const [addComment, setaddComment] = useState('');
+    function handleComment(e){
+        setaddComment(e.target.value)
+    }
+    const postData = async () => {
+        await axios.post(`${process.env.REACT_APP_LOCAL_SERVER}/addMovie`, {
+            // method: 'POST',
+                id: props.clickedMovie.id,
+                title: props.clickedMovie.title,
+                release_date: props.clickedMovie.release_date,
+                overview: props.clickedMovie.overview,
+                poster_path: props.clickedMovie.poster_path,
+                comment: addComment
+            },
+            // headers: {
+            //     'content-type': 'application/json; charset=UTF-8',
+            // },
+        )
     }
 
-export default ModalMOvie;
+
+    return (
+        <Modal show={props.showFlag} onHide={props.handleclose}>
+            <Modal.Header closeButton>
+                <Modal.Title>{props.clickedMovie.title}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Image src={`https://image.tmdb.org/t/p/w500/${props.clickedMovie.poster_path}`} width='100%'></Image>
+                <p>{props.clickedMovie.overview}</p>
+                <div>
+
+                    <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                        <Form.Label>comment</Form.Label>
+                        <Form.Control as="textarea" onChange={handleComment} rows={3} />
+                    </Form.Group>
+
+                </div>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={props.handleclose}>
+                    Close
+                </Button>
+                <Button variant="primary" onClick={() => {
+                    alert('added to favorite successfully')
+                    postData();
+                }}>
+                    add to favorite
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    )
+}
+
+export default ModalMovie;

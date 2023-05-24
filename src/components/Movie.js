@@ -1,60 +1,42 @@
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import React,{useState} from 'react';
-import axios from 'axios';
-import ModalMovie from './ModalMovie'
+import Col from 'react-bootstrap/Col';
+import ModalMovie from './ModalMovie';
+import { useState } from 'react';
 
-function Movie({movie}) {
-    const [showModal, setShowModal] = useState(false);
-    const [comment, setComment] = useState('');
 
-    const handleAddToFavorites = async () => {
-        try {
-        const res = await axios.post(`${process.env.REACT_APP_LOCAL_SERVER}/addMovie`, {
-            id : movie.id,
-            title: movie.title,
-            release_date: movie.release_date,
-            poster_path: movie.poster_path,
-            overview: movie.overview,
-            comments: ''
-        });
-    } catch (error) {
-    console.log(error);
+function Movie(props) {
+
+    const [showFlag, setShowFlag] = useState(false);
+    const [clickedMovie, setClickedMovie] = useState({});
+    const handleShow = (item) => {
+        setClickedMovie(item);
+        setShowFlag(true);
     }
-};
 
-const handleShowModal = () => {
-    setShowModal(true);
-};
+    const handleclose = () => {
+        setShowFlag(false);
+    }
 
-const handleCloseModal = () => {
-    setShowModal(false);
-};
 
-return (
-    <Card style={{ width: '18rem' }}>
-    <Card.Img variant="top" src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} alt={'no-pic'}/>
-    <Card.Body>
-        <Card.Title>{movie.title || movie.name}</Card.Title>
+    return (
+        <div>
+        <Col>
+        <Card style={{ width: '18rem' }}>
+        <Card.Img variant="top" src={`https://image.tmdb.org/t/p/w500/${props.a.poster_path}`} />
+        <Card.Body>
+        <Card.Title>{props.a.title}</Card.Title>
         <Card.Text>
-            {movie.overview}
-        </Card.Text>
-        <Button className="btn btn-secondary" onClick={handleShowModal}>
-        Details
-        </Button>
-    </Card.Body>
-    {
-    showModal && (
-        <ModalMovie
-        movie={movie}
-        comment={comment}
-        setComment={setComment}
-        onClose={handleCloseModal}
-        onAddToFavorites={handleAddToFavorites}
-        />
+            <p>{props.a.overview}</p>        </Card.Text>
+        <Button variant="primary" onClick={()=>{
+            handleShow(props.a)
+        }}>add to favorite</Button>
+        </Card.Body>
+    </Card>
+    </Col>
+    <ModalMovie showFlag = {showFlag} handleclose = {handleclose} clickedMovie = {clickedMovie}/> 
+    </div>
     )
     }
-    </Card>
-    )
-}
+
 export default Movie;
